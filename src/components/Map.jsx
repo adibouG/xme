@@ -8,10 +8,10 @@ import './Map.css';
 
 const MapComponent = () => {
 
-  const mapContainerRef = React.useRef<HTMLElement>(null);
-  const mapRef = useRef<L.Map|null>(null);
+  const mapContainerRef = useRef(null);
+  const mapRef = useRef(null);
   
-  const [mapCenter, setMapCenter] = useState({lng: 37.7749, lat: -122.4194}); // San Francisco
+  const [mapCenter, setMapCenter] = useState({ lng: 37.7749, lat: -122.4194 }); // San Francisco
   const [zoom, setZoom] = useState(12);
   const [markerPosition, setMarkerPosition] = useState(mapCenter)//[37.7859, -122.4364]); // Example marker position
 
