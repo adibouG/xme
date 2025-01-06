@@ -1,3 +1,5 @@
+import React from 'react';
+import MapComponent from '../components/Map';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Home.css';
@@ -16,7 +18,9 @@ const Home: React.FC = () => {
             <IonTitle size="large">Blank</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer />
+        <div id="container">
+          <MapComponent />   
+        </div>
       </IonContent>
     </IonPage>
   );
