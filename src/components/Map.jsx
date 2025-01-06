@@ -1,9 +1,10 @@
 // MapComponent.js
 import React, {useRef, useState, useEffect, LegacyRef } from 'react';
-//import { Map, TileLayer, Marker } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import '@maptiler/leaflet-maptilersdk';
 import './Map.css';
+const APIKEY = import.meta.env.VITE_BASE_API_KEY
 //import 'openmaptiles/dist/openmaptiles.css';
 
 const MapComponent = () => {
@@ -17,17 +18,30 @@ const MapComponent = () => {
 
   useEffect(() => {
     if (mapRef.current) return; // initialize map only once
-    mapRef.current = new L.Map(mapContainerRef.current, { 
+    const map = new L.Map('map')
+    .setView([mapCenter.lng, mapCenter.lat], zoom)
+    /*, { 
       center: L.latLng(mapCenter.lat, mapCenter.lng), 
       zoom: zoom 
-    });
-      
+    });*/
+    const mtLayer = L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' , 
+      {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+      mapRef.current = map;
+      /*{
+      apiKey: APIKEY
+    }).addTo(map);
+    mapRef.current = map;
+      */
     
   }, [mapCenter.lat, mapCenter.lng, zoom]);
 
   return (
     <div  className='map_wrapper'>
-      <div ref={mapContainerRef } className='map' />
+      <div ref={mapContainerRef } className='map' id='map'>
+            </div>
     </div>
   );
 };
