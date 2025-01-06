@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">xme</string>
+    <string name="title_activity_main">xme</string>
+    <string name="package_name">ionic.xme</string>
+    <string name="custom_url_scheme">ionic.xme</string>
+</resources>
