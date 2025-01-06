@@ -1,24 +1,29 @@
 import React from 'react';
-import MapComponent from '../components/Map.jsx';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import MapComponent from '../components/Map/Map.jsx';
+import { useIonViewDidEnter,IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Home.css';
 
 const Home: React.FC = () => {
+  const resizeEvent = () => window.dispatchEvent(new Event('resize'));
+
+
+   useIonViewDidEnter(() => {
+    console.log('useIonViewDidEnter')
+    React.useLayoutEffect( () => {
+     resizeEvent();
+   } , [])
+  })
+  
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Blank</IonTitle>
+          <IonTitle>X.me</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Blank</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <MapComponent />   
+      <IonContent >
+       <MapComponent />   
       </IonContent>
     </IonPage>
   );
