@@ -22,10 +22,12 @@ export const getDeviceLocation = async (maxAge = 5, watchTime = 0) => {
     } catch (error) {
         console.log(error);
         const permState = await getPermissions();
-        if (!permState || permState.location === 'denied') {
-            coordinates = null;
+        if (coordinates === null &&
+             (!permState || permState.location === 'denied'))
+        {
+            return;
         }
-        else {
+        else if (permState && permState.location !== 'denied') {
             coordinates = await Geolocation.getLocation(options);
         }
     }  finally {
@@ -58,7 +60,31 @@ const getPermissions = async () => {
         console.log('Permissions: ', permState);
         return permState;
     } catch (error) {
-        console.log('no location service or else...',error);
-        return null;
+        console.log('no location service or else...', error);
+        const coord = await getCoordsFromNavigator()
+        if (coord) {
+            console.log('location from navigator ', coord);
+            coordinates = coord;
+            return;
+        }
+        else {
+            console.log('failed to get coords from navigator...', err)
+            return;
+        }
     }
 }
+
+const getCoordsFromNavigator = () => new Promise(
+            (resolve, reject) => window.navigator.geolocation.getCurrentPosition(
+                position => {
+                    console.log('Position: ', position);
+                    resolve(position);
+                },  
+                error => {
+                    console.log('Error: ', error);
+                    reject(null);
+                }
+            )
+        );
+
+     
