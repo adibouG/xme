@@ -9,6 +9,7 @@ width: 10%;
 height: 50%;
 top: 0;
 right: 0;
+border: 1px solid red;
 }
 
 .toolbar {

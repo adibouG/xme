@@ -1,20 +1,19 @@
 import React from 'react';
-import MapComponent from '../components/Map/Map.jsx';
 import { useIonViewDidEnter,IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
+import MapComponent from '../components/Map/Map.jsx';
+import Toolbar from '../components/Toolbar/Toolbar';
 import './Home.css';
 const APPTITLE = import.meta.env.VITE_APP_TITLE || 'X.me';
 
 
 const Home: React.FC = () => {
   const resizeEvent = () => window.dispatchEvent(new Event('resize'));
-
-
-   useIonViewDidEnter(() => {
+  useIonViewDidEnter(() => {
     console.log('useIonViewDidEnter')
-    React.useLayoutEffect( () => {
-     resizeEvent();
-   } , [])
+    React.useLayoutEffect(() => {
+      resizeEvent();
+      return;
+    }, [])
   })
   
   return (
@@ -25,7 +24,8 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent >
-       <MapComponent />   
+        <Toolbar />
+       <MapComponent  />   
       </IonContent>
     </IonPage>
   );
