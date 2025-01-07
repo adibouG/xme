@@ -12,8 +12,8 @@ const MapComponent = ({ mapCenterValue, zoomValue, myPos, markerPositions, ...pr
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   
-  const centered = { lat: mapCenterValue?.lat || 37.7749, lng: mapCenterValue?.lng || -122.4194 };  
-  const me = { lat: myPos?.lat || centered.lat, lng: myPos?.lng || centered.lng };  
+  const centered = { lat: mapCenterValue?.coords?.lat || 37.7749, lng: mapCenterValue?.coords?.lng || -122.4194 };  
+  const me = { lat: myPos?.coords?.lat || centered.lat, lng: myPos?.coords?.lng || centered.lng };  
   const alt = zoomValue || 12;  
   markerPositions = markerPositions || [];
   const [mapCenter, setMapCenter] = useState(centered); // San Francisco
