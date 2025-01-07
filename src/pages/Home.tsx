@@ -2,7 +2,7 @@ import React from 'react';
 import { useIonViewWillEnter ,useIonViewDidEnter,IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import MapComponent from '../components/Map/Map.jsx';
 import Toolbar from '../components/Toolbar/Toolbar';
-import { getDeviceLocation, coordinates, lastLocationWatch } from '../Helpers/GeoLoc/GeoLoc.js';
+import { getDeviceLocation, lastLocationWatch } from '../Helpers/GeoLoc/GeoLoc.js';
 import { getDeviceType } from '../Helpers/Device/Device.js';
 import './Home.css';
 const APPTITLE = import.meta.env.VITE_APP_TITLE || 'X.me';

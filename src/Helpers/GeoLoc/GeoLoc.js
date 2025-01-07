@@ -34,8 +34,8 @@ export const getDeviceLocation = async (maxAge = 5, watchTime = 0) => {
         console.log('Coordinates: ', coordinates);   
     }
 
+    lastLocationWatch = coordinates || lastLocationWatch;
     if (watchTime > 0) {
-        lastLocationWatch = coordinates;
         watchId = await Geolocation.watchPosition(options, 
                 (position, error) => { 
                     if (error) {
@@ -51,6 +51,7 @@ export const getDeviceLocation = async (maxAge = 5, watchTime = 0) => {
         await Geolocation.clearWatch(watchId); 
         watchId = 0;
     }
+    
     return coordinates;
 };
 
