@@ -1,6 +1,6 @@
 import { Geolocation } from "@capacitor/geolocation";
-export let lastLocationWatch = null;
-export let watchId = 0;
+export var lastLocationWatch = null;
+export var watchId = null;
 export const getDeviceLocation = async (maxAge = 5, watchTime = 0) => {
     let coordinates = null;
 
@@ -10,8 +10,15 @@ export const getDeviceLocation = async (maxAge = 5, watchTime = 0) => {
         return lastLocationWatch;
     }
 
+    const options = {
+        enableHighAccuracy: true,
+        maximumAge: maxAge * 1000,
+        timeout: watchTime * 3000,
+        minimumUpdateInterval: watchTime * 1000
+    };        
+
     try {   
-        coordinates = await Geolocation.getCurrentPosition();
+        coordinates = await Geolocation.getCurrentPosition(options);
     } catch (error) {
         console.log(error);
         const permState = await getPermissions();
@@ -19,7 +26,7 @@ export const getDeviceLocation = async (maxAge = 5, watchTime = 0) => {
             coordinates = null;
         }
         else {
-            coordinates = await Geolocation.getLocation();
+            coordinates = await Geolocation.getLocation(options);
         }
     }  finally {
         console.log('Coordinates: ', coordinates);   
@@ -27,14 +34,19 @@ export const getDeviceLocation = async (maxAge = 5, watchTime = 0) => {
 
     if (watchTime > 0) {
         lastLocationWatch = coordinates;
-        watchId = window.setInterval(
-            getDeviceLocation,
-            watchTime * 1000,
-            maxAge, watchTime
-        )
+        watchId = await Geolocation.watchPosition(options, 
+                (position, error) => { 
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+                    return position;
+                }
+            );
     }
+    
     else if (watchId) {
-        window.clearInterval(watchId);
+        await Geolocation.clearWatch(watchId); 
         watchId = 0;
     }
     return coordinates;
