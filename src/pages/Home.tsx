@@ -9,16 +9,17 @@ const APPTITLE = import.meta.env.VITE_APP_TITLE || 'X.me';
 
 
 const Home: React.FC = () => {
-  const [deviceType, setDeviceType] = React.useState(null);
-  const [deviceLocation, setDeviceLocation] = React.useState(null);
+  const [deviceType, setDeviceType] = React.useState("");
+  const [deviceLocation, setDeviceLocation] = React.useState({});
 
   const resizeEvent = () => window.dispatchEvent(new Event('resize'));
   
   const getDeviceData = async () => {
-    const deviceLocation = await getDeviceLocation();
-    setDeviceLocation(deviceLocation);
-    const deviceType = await getDeviceType();
-    setDeviceType(deviceLocation);
+    const devLocation = await getDeviceLocation();
+    console.log('devLocation: ', devLocation);
+    setDeviceLocation(devLocation);
+    const devType = await getDeviceType();
+    setDeviceType(devType);
   }
   
   React.useLayoutEffect(() => {
@@ -44,7 +45,8 @@ const Home: React.FC = () => {
       </IonHeader>
       <IonContent >
         <Toolbar />
-       <MapComponent myPos={false} mapCenterValue={false} 
+       <MapComponent myPos={deviceLocation} 
+                    mapCenterValue={deviceLocation} 
                     zoomValue={17}
                     markerPositions={[]} 
         />   
