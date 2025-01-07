@@ -2,30 +2,28 @@
 import React, {useRef, useState, useEffect, LegacyRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+//import '@maptiler/leaflet-maptilersdk';
 import './Map.css';
 const APIKEY = import.meta.env.VITE_BASE_API_KEY
-import '@maptiler/leaflet-maptilersdk';
 //import 'openmaptiles/dist/openmaptiles.css';
 
-const MapComponent = (props) => {
-
-  const [mapCenterValue, zoomValue, myPos, markerPositions] = props;
+const MapComponent = ({ mapCenterValue, zoomValue, myPos, markerPositions, ...props}) => {
  
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   
   const centered = mapCenterValue || { lat: 37.7749, lng: -122.4194 };  
-  const alt = zoomValue || 10;  
+  const alt = zoomValue || 12;  
   
   const [mapCenter, setMapCenter] = useState(centered); // San Francisco
   const [zoom, setZoom] = useState(alt);
-  const [markerPosition, setMarkerPosition] = useState(myPos || mapCenter)//[37.7859, -122.4364]); // Example marker position
+  const [markerPosition, setMarkerPosition] = useState(myPos)//[37.7859, -122.4364]); // Example marker position
   const [otherMarkerPositions, setOtherMarkerPositions] = useState(markerPositions)//[37.7859, -122.4364]); // Example marker position
 
   useEffect(() => {
     if (mapRef.current) return; // initialize map only once
     const map = new L.Map('map')
-      .setView([mapCenter.lng, mapCenter.lat], zoom)
+      .setView([mapCenter.lat, mapCenter.lng], zoom)
 
     const mtLayer = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' , 

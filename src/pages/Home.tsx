@@ -8,12 +8,12 @@ const APPTITLE = import.meta.env.VITE_APP_TITLE || 'X.me';
 
 const Home: React.FC = () => {
   const resizeEvent = () => window.dispatchEvent(new Event('resize'));
+  React.useLayoutEffect(() => {
+    resizeEvent();
+  }, [])
   useIonViewDidEnter(() => {
     console.log('useIonViewDidEnter')
-    React.useLayoutEffect(() => {
-      resizeEvent();
-      return;
-    }, [])
+    resizeEvent();
   })
   
   return (
