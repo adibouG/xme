@@ -1,10 +1,12 @@
 import React from 'react'
 import './Toolbar.css'
 
-const Toolbar = props => {
+const Toolbar = ({children, ...props}: React.PropsWithChildren) =>  {
   return (
     <div className='toolbar_wrapper'>
-        [props.children]
+        <div className='toolbar' >
+            {[children]}
+        </div>
     </div>
   )
 }

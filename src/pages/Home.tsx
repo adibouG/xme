@@ -3,6 +3,8 @@ import MapComponent from '../components/Map/Map.jsx';
 import { useIonViewDidEnter,IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Home.css';
+const APPTITLE = import.meta.env.VITE_APP_TITLE || 'X.me';
+
 
 const Home: React.FC = () => {
   const resizeEvent = () => window.dispatchEvent(new Event('resize'));
@@ -19,7 +21,7 @@ const Home: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>X.me</IonTitle>
+          <IonTitle>{APPTITLE}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent >

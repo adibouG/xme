@@ -7,14 +7,20 @@ import './Map.css';
 const APIKEY = import.meta.env.VITE_BASE_API_KEY
 //import 'openmaptiles/dist/openmaptiles.css';
 
-const MapComponent = () => {
+const MapComponent = (props) => {
 
+  const [mapCenterValue, zoomValue, myPos, markerPositions] = props;
+ 
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   
-  const [mapCenter, setMapCenter] = useState({ lng: 37.7749, lat: -122.4194 }); // San Francisco
-  const [zoom, setZoom] = useState(12);
-  const [markerPosition, setMarkerPosition] = useState(mapCenter)//[37.7859, -122.4364]); // Example marker position
+  const centered = mapCenterValue || { lat: 37.7749, lng: -122.4194 };  
+  const alt = zoomValue || 10;  
+  
+  const [mapCenter, setMapCenter] = useState(centered); // San Francisco
+  const [zoom, setZoom] = useState(alt);
+  const [markerPosition, setMarkerPosition] = useState(myPos || mapCenter)//[37.7859, -122.4364]); // Example marker position
+  const [otherMarkerPositions, setOtherMarkerPositions] = useState(markerPositions)//[37.7859, -122.4364]); // Example marker position
 
   useEffect(() => {
     if (mapRef.current) return; // initialize map only once
