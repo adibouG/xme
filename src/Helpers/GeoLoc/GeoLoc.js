@@ -10,7 +10,7 @@ export const getDeviceLocation = async (maxAge = 30, watchTime = 0) => {
     if (maxAge && lastLocationWatch  &&
         (maxAge * 1000) >  (Date.now() - lastLocationWatch.timestamp))
     {
-        console.log('Max Age not expired, returning lastLocationWatch');
+        console.log('Max Age not expired, returning lastLocationWatch',lastLocationWatch);
         return lastLocationWatch;
     }
 
@@ -18,26 +18,27 @@ export const getDeviceLocation = async (maxAge = 30, watchTime = 0) => {
         enableHighAccuracy: true,
         maximumAge: maxAge * 1000,
         timeout: 15 * 1000,
-        minimumUpdateInterval: watchTime ? watchTime * 1000 : this.maximumAge
+        minimumUpdateInterval: watchTime ? watchTime * 1000 : maxAge * 1000
     };        
 
     try {   
         coordinates = await Geolocation.getCurrentPosition(options);
         console.log('Coordinates: ', coordinates);   
-        lastLocationWatch = coordinates ;
         if (watchTime > 0) {
+            lastLocationWatch = coordinates ;
             watchId = await Geolocation.watchPosition(options, getDeviceLocation );
         }
         else if (watchTime === 0 && watchId) {
             await Geolocation.clearWatch(watchId); 
             watchId = 0;
         }
+        lastLocationWatch = coordinates ;
         return lastLocationWatch;
     } catch (error) {
         console.log(error);
-        geolocationError = error;
         const permState = await getPermissions();
         if (permState && permState.location !== 'denied' && !geolocationError && !geolocationPermissionError) {
+            geolocationError = error;
             return await getDeviceLocation(maxAge, watchTime);
         }
         else {
@@ -62,9 +63,10 @@ const getPermissions = async () => {
 const getCoordsFromBrowser = async () => {
     try {
         const coord = await getCoordsFromNavigator()
+        coord.coords['lat'] = coord.coords.latitude;
+        coord.coords['lng'] = coord.coords.longitude;
+        
         console.log('location from navigator ', coord);
-        coord.coords.lat = coord.coords.latitude;
-        coord.coords.lng = coord.coords.longitude;
         lastLocationWatch = coord;
         return true;
     }
