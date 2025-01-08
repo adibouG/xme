@@ -1,15 +1,16 @@
 export const mocData = {
-    "users": [{
+    "users": [
+    {
         "id": 1,
         "username": "joe",
         "preference": {
-            "channels" : ["*"],
+            "channels" : [],
         },
         "location": {
             timestamp: 123456789,
             coords: {
-                lat: 123,
-                lng: 456
+                lat: 23,
+                lng: 45
             }
         }
     },
@@ -18,13 +19,13 @@ export const mocData = {
         
         "username": "joe",
         "preference": {
-            "channels" : ["*"],
+            "channels" : [],
         },
         "location": {
             timestamp: 123456789,
             coords: {
-                lat: 122,
-                lng: 456
+                lat: 22,
+                lng: 56
             }
         }
     },
@@ -32,13 +33,13 @@ export const mocData = {
         "id": 3,
         "username": "joe",
         "preference": {
-            "channels" : ["*"],
+            "channels" : [1],
         },
         "location": {
             timestamp: 123456789,
             coords: {
-                lat: 121,
-                lng: 454
+                lat: 11,
+                lng: 46
             }
         }
     },
@@ -46,13 +47,13 @@ export const mocData = {
         "id": 4,
         "username": "joe",
         "preference": {
-            "channels" : ["*"],
+            "channels" : [2, 3],
         },
         "location": {
             timestamp: 123456789,
             coords: {
-                lat: 121,
-                lng: 453
+                lat: 12,
+                lng: 45
             }
         }
     }],
