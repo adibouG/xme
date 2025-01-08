@@ -1,5 +1,5 @@
-export const mocData = [
-    {
+export const mocData = {
+    "users": [{
         "id": 1,
         "username": "joe",
         "preference": {
@@ -44,7 +44,6 @@ export const mocData = [
     },
     {
         "id": 4,
-        
         "username": "joe",
         "preference": {
             "channels" : ["*"],
@@ -55,6 +54,24 @@ export const mocData = [
                 lat: 121,
                 lng: 453
             }
-        }    
-    }
-]
+        }
+    }],
+    "channels": [
+        {
+            "id": 1,
+            "name": "channel1"
+        },
+        {
+            "id": 2,
+            "name": "channel2"
+        },
+        {
+            "id": 3,
+            "name": "channel3"
+        },
+        {
+            "id": 4,
+            "name": "channel4"
+        }
+    ]
+}
