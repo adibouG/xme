@@ -5,6 +5,7 @@ export const mocData = {
         "username": "joe",
         "preference": {
             "channels" : [],
+            "categories": []
         },
         "location": {
             timestamp: 123456789,
@@ -20,6 +21,7 @@ export const mocData = {
         "username": "joe",
         "preference": {
             "channels" : [],
+            "categories" : [],
         },
         "location": {
             timestamp: 123456789,
@@ -34,6 +36,7 @@ export const mocData = {
         "username": "joe",
         "preference": {
             "channels" : [1],
+            "categories" : [1],
         },
         "location": {
             timestamp: 123456789,
@@ -48,7 +51,9 @@ export const mocData = {
         "username": "joe",
         "preference": {
             "channels" : [2, 3],
+            "categories" : [2, 3],
         },
+        "desc": "",
         "location": {
             timestamp: 123456789,
             coords: {
@@ -60,19 +65,54 @@ export const mocData = {
     "channels": [
         {
             "id": 1,
-            "name": "channel1"
+            "name": "fun, casual and friedly",
+            
         },
         {
             "id": 2,
-            "name": "channel2"
+            "name": "open to dating"
         },
         {
             "id": 3,
-            "name": "channel3"
+            "name": "looking for x-men..."
         },
         {
             "id": 4,
-            "name": "channel4"
+            "name": "looking for x-women..."
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "men",
+        },
+        {
+            "id": 2,
+            "name": "women"
+        },
+        {
+            "id": 3,
+            "name": "hetero"
+        },
+        {
+            "id": 4,
+            "name": "homo"
+        },
+        {
+            "id": 5,
+            "name": "bisexual"
+        },
+        {
+            "id": 6,
+            "name": "transgender"
+        },  
+        {
+            "id": 7,
+            "name": "other"
+        },  
+        {
+            "id": 8,
+            "name": "keywords"
         }
     ]
 }

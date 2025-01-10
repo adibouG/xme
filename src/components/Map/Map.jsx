@@ -8,11 +8,27 @@ import './Map.css';
 const APIKEY = import.meta.env.VITE_BASE_API_KEY
 //import 'openmaptiles/dist/openmaptiles.css';
 import { mocData as DATA } from '../../mocData';
+/*
+const LeafIcon = L.Icon.extend({
+  options: {
+      shadowUrl: 'leaf-shadow.png',
+      iconSize:     [38, 95],
+      shadowSize:   [50, 64],
+      iconAnchor:   [22, 94],
+      shadowAnchor: [4, 62],
+      popupAnchor:  [-3, -76]
+  }
+});
+*/
 const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
    myPos, markerPositions, ...props }) => 
 { 
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const mapFilterRef = useRef('');
+
+  const containerRef = useRef(null);
+  const [popupContainer, setPopupContainer] = useState(null);
 
   const me = { lat: myPos?.coords?.lat || mapCenterLat, lng: myPos?.coords?.lng || mapCenterLng };  
   markerPositions = markerPositions || [];
@@ -79,10 +95,17 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
   function onLocationError(e) {
     alert(e.message);
   }
-
+  function filterMap(e) { 
+   // mapFilterRef.current = e.target.value;
+    // const overlays = makeOtherMarkers();
+    const overlays = L.geoJSON(null, );
+    const layerControl = L.control.layers(null, overlays).addTo(mapRef.current);
+    layerControl.removeLayer(layerControl.getLayer(mapFilterRef.current));
+    layerControl.addLayer(layerControl.getLayer(mapFilterRef.current));
+  }
 
   const initMap = () => {
-    const map = new L.Map(mapContainerRef.current).locate({setView: true, maxZoom: 15})
+    const map = new L.Map(mapContainerRef.current)
     const mtLayer = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' , 
       {
@@ -108,6 +131,16 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
     <div  className='map_wrapper'>
       <div ref={mapContainerRef} className='map' id='map'>
       </div>
+      {
+        /*
+        <div className='filter'> 
+        <input ref={mapFilterRef}
+         type="input" id="filter" name="filter"
+         onChange={(e) => filterMap(e)}
+        />
+        </div>
+        */
+      }
     </div>
   );
 };
