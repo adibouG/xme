@@ -1,22 +1,30 @@
 const routes = require('express').Router()
 const server = require('./server');
-const { uuid } = require('crypto');
+const { randomUUID, createHash  } = require('crypto');
 
 routes.post('/users/connect', (req, res) => {
     try {
         const data = req.body;
-        console.log(data);
-        if (!data.username) {
-            return res.sendStatus(400)
+        
+        if (req.cookies.device_id) {
+            data.device_id = req.cookies.device_id
         }
-    
+        if (!data.username) {
+            if (req.cookies.username) {
+                data.username = req.cookies.username
+            } else
+                return res.sendStatus(400)
+        }
+        
         if (!data.position) {
             return res.sendStatus(400)
         }
+        console.log(data);
     
         if (!data.device_id) {
-            data.user_id = req.ip 
-            data.device_id = uuid();    
+            data.device_id = Date.now() + '::' 
+            data.device_id += randomUUID() + '::' 
+            data.device_id += createHash('sha256').update(req.ip).digest('hex'); 
         }
         
         if (server.connected_users[data.device_id]) {
@@ -52,20 +60,14 @@ routes.post('/users/disconnect/:userId',
       try {
         const userId = req.params.userId
         const data = req.body;
-    /* if (!data.device_id) {
+    
+        const isDisconnected = server.userDisconnect(data);
+        if (!isDisconnected) {
             return res.sendStatus(400)
         }
-        
-        if (!server.connected_users[data.device_id]) {
-            return res.sendStatus(400)
-        }
-
-        if (server.connected_users[data.device_id].id !== userId) {
-            return res.sendStatus(400)
-        }
-    */    
-      
-        server.userDisconnect(data);
+//        res.clearCookie('device_id');
+//        res.clearCookie('username');
+        res.clearCookie('user_id');
         res.sendStatus(200)
     }    
     catch (err) {

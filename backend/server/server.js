@@ -98,9 +98,12 @@ const userConnect = (data) => {
 }
 
 const userDisconnect = (data) => {
-  delete connected_users[data.device_id];
-  delete connected_user_keys[data.id];
-  delete posted_messages_events[data.id];
+  const isDeleted = (connected_users.delete(data.device_id) &&
+     connected_user_keys.delete(data.id))
+  if (isDeleted) {
+    posted_messages_events.delete(data.id) 
+  }
+  return isDeleted;
 }
 
 const isSameArea = (user1, user2, offset = 1) => {
