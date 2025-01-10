@@ -1,8 +1,8 @@
 const routes = require('express').Router()
 const server = require('./server');
-const { uuid } = require('uuidv4');
+const { uuid } = require('crypto');
 
-routes.post('/api/users/connect', (req, res) => {
+routes.post('/users/connect', (req, res) => {
     try {
         const data = req.body;
         console.log(data);
@@ -46,7 +46,7 @@ routes.post('/api/users/connect', (req, res) => {
     }
 })
 
-routes.post('/api/users/disconnect/:userId', 
+routes.post('/users/disconnect/:userId', 
     server.isValidUser,
     (req, res) => {
       try {
@@ -74,7 +74,7 @@ routes.post('/api/users/disconnect/:userId',
     }
 })
 
-routes.get('/api/events/:userId', server.isValidUser, (req, res) => {
+routes.get('/events/:userId', server.isValidUser, (req, res) => {
     
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Content-Type', 'text/event-stream');
@@ -84,7 +84,12 @@ routes.get('/api/events/:userId', server.isValidUser, (req, res) => {
 
     const userId = req.params.userId;
     const userKey = req.headers['user-key'];
+    const userPos = req.headers['user-location'];
+    
     const user = res.locals.user;    
+    if (userPos) {
+       server.updateUserPosition(user.id, userPos)     
+    }
     const payload = '{ messages: [\n';
     if (server.posted_messages_events[key]) 
     {
@@ -95,7 +100,7 @@ routes.get('/api/events/:userId', server.isValidUser, (req, res) => {
         delete server.posted_messages_events[key];
     }
     payload += '], positions: [\n' ;
-    for (const users in server.connected_users) {
+    for (const users of Object.values(server.connected_users)) { // for (const users in server.connected_users) {
         if (users.id !== user.id && isSameArea(user, users)) 
         {
             payload += JSON.stringify(users) + ',\n'
@@ -132,3 +137,5 @@ routes.post('/api/messages/receive', (req, res) => {
     res.sendStatus(200)
   
 })
+
+module.exports = routes

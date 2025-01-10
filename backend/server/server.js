@@ -1,4 +1,3 @@
-const { c } = require('vitest/dist/reporters-5f784f42.js')
 
 const sqlite3 = require('sqlite3').verbose()
 const db = new sqlite3.Database(':memory:')
@@ -36,28 +35,42 @@ const initDB = () => {
 //db
 
 //server dynamic data
-const connected_users = {}
+const connected_users = new Map(); //use a Set ?
+const connected_user_keys = new Map();
+const posted_messages_events = new Map();
 
-const connected_user_keys = {}
-
-const posted_messages_events = {}
-
-const Message = { 
-    id: 0,
-    to: 0,
-    from: 0,
-    textMessage: "",
-    statuses: {
-      message: { send: 0, receive: 0, read: 0 },
-      from: 0,
-      to: 0 
-    },
-    timestamps: {send: 0, receive: 0, read: 0}
-}// model for messages
+function Message () {
+  this.id = "";
+  this.to = [];
+  this.from = 0;
+  this.message = "";
+  this.statuses = [];
+  this.timestamp = 0;
+  return this;
+} 
+// model for messages
 
 //helpers
-const addMessageEvent = (data) => {
-    
+const addMessageEvent = (message) => {
+  const from_user = message.from
+  const messageId = `${from_user}::${message.timestamp}::
+    ${posted_messages_events[from_user].length + 1}` 
+  message.id = messageId
+ 
+  for (let i = 0; i < message.to.length; i++)
+  {
+    const to_user = message.to[i];
+    if (connected_users[connected_user_keys[to_user]]) {
+      message.statuses[i] = { 
+        send: Date.now(),
+        received: 0,
+        read: 0
+      };
+      posted_messages_events[to_user].push(message);
+    }
+  }
+  posted_messages_events[from_user].push(message);
+  return message;  
 }
 
 const addMessage = (data) => {

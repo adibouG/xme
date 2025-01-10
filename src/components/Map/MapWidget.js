@@ -95,10 +95,14 @@ const PopupWithChatFeature = L.Popup.extend({
     }
 })
 
+function popupWithChat(options) {
+    return new PopupWithChatFeature(options);
+}
+
 export function addInputToPopupWidget(map, popupDiv) {
         
   const chatDiv = document.createElement('div');
-  L.popup().setLatLng(map.getCenter())
+  const popup = popupWithChat().setLatLng(map.getCenter())
     .setContent(chatDiv)
     .openOn(map);
   return popupDiv;
