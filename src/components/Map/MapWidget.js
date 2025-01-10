@@ -1,12 +1,12 @@
 import 'leaflet/dist/leaflet.css';
 import * as L from 'leaflet';
-import { EventEmitter, Event, EventSource } from 'event';
+//import { EventSource } from 'event';
 
 
 export function createMapWidget(containerDomNode) {
   console.log('createMapWidget');
 
-  const map = L.map(containerDomNode);
+  const map = new L.map(containerDomNode);
   map.locate({setView: true, maxZoom: 15})
   L.tileLayer(
     'https://tile.openstreetmap.org/{z}/{x}/{y}.png', 
@@ -80,9 +80,9 @@ const PopupWithChatFeature = L.Popup.extend({
     _popup_userId: null,
     _popup_sentText: [], 
     _popup_receivedText: [],	
-
-    initialize: function(name, options) {
-        this.name = name;
+    _chatDiv: null,
+    initialize: function(options) {
+        this._chatDiv = options.chatDiv;
         L.setOptions(this, options);
     },
     
@@ -95,15 +95,20 @@ const PopupWithChatFeature = L.Popup.extend({
     }
 })
 
-function popupWithChat(options) {
+export function popupWithChat(options) {
     return new PopupWithChatFeature(options);
 }
 
 export function addInputToPopupWidget(map, popupDiv) {
         
   const chatDiv = document.createElement('div');
-  const popup = popupWithChat().setLatLng(map.getCenter())
-    .setContent(chatDiv)
-    .openOn(map);
-  return popupDiv;
+   const chatInput = document.createElement('input');
+   const inputSend = document.createElement('button');
+   inputSend.innerHTML = 'Send';
+    chatDiv.appendChild(chatInput)
+    chatDiv.appendChild(inputSend)
+   //popupDiv.appendChild(chatDiv);
+   popupDiv.appendChild(chatDiv);
+
+  return chatDiv;
 }

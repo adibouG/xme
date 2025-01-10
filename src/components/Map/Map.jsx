@@ -3,6 +3,7 @@ import React, {useRef, useLayoutEffect, useState, useEffect, LegacyRef } from 'r
 import ReactDOM from 'react-dom';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { createMapWidget, addInputToPopupWidget } from './MapWidget.js';
 //import '@maptiler/leaflet-maptilersdk';
 import './Map.css';
 const APIKEY = import.meta.env.VITE_BASE_API_KEY
@@ -89,8 +90,14 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
 
   function onLocationFound(e) {
     let radius = e.accuracy;
-    L.marker(e.latlng).addTo(mapRef.current).bindPopup("You are within " + radius + " meters from this point").openPopup();
+    const marker = L.marker(e.latlng)
+                .addTo(mapRef.current)
+                .bindPopup("You are within " + radius + " meters from this point").openPopup();
     L.circle(e.latlng, radius).addTo(mapRef.current);
+    const popupDiv = addInputToPopupWidget(mapRef.current, marker.getPopup().getElement());
+    
+    setPopupContainer(popupDiv);
+  
   }
   function onLocationError(e) {
     alert(e.message);
@@ -105,18 +112,22 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
   }
 
   const initMap = () => {
-    const map = new L.Map(mapContainerRef.current)
+    const map = createMapWidget(mapContainerRef.current)
+    /* new L.Map(mapContainerRef.current)
+    map.locate({setView: true, maxZoom: 15});
     const mtLayer = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' , 
       {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }
     ).addTo(map);
-
+  */
     mapRef.current = map;      
     mapRef.current.on('locationfound', onLocationFound);
     mapRef.current.on('locationerror', onLocationError);
 
+    // const popupDiv = addInputToPopupWidget(mapRef.current, popupContainer);
+    // setPopupContainer(popupDiv);
     const overlays = makeOtherMarkers();
     const layerControl = L.control.layers(null, overlays).addTo(mapRef.current);
  
@@ -130,6 +141,12 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
   return (
     <div  className='map_wrapper'>
       <div ref={mapContainerRef} className='map' id='map'>
+      {
+        popupContainer !== null && ReactDOM.createPortal(
+          <p>Hello from React!</p>,
+          popupContainer
+        )
+      }
       </div>
       {
         /*
