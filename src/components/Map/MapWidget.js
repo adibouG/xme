@@ -93,22 +93,29 @@ const PopupWithChatFeature = L.Popup.extend({
         this._chatDiv.style.backgroundColor = 'white';
         this._chatDiv.style.height = '2em'; 
     }
+
+    
+
 })
 
 export function popupWithChat(options) {
     return new PopupWithChatFeature(options);
 }
 
-export function addInputToPopupWidget(map, popupDiv) {
+export function addInputToPopupWidget(popupDiv, userData) {
         
+  const userDiv = document.createElement('div');
+  userDiv.id = userData.id;
+  userDiv.user = userData;
+  
   const chatDiv = document.createElement('div');
-   const chatInput = document.createElement('input');
-   const inputSend = document.createElement('button');
-   inputSend.innerHTML = 'Send';
-    chatDiv.appendChild(chatInput)
-    chatDiv.appendChild(inputSend)
-   //popupDiv.appendChild(chatDiv);
-   popupDiv.appendChild(chatDiv);
+//    const chatInput = document.createElement('input');
+//    const inputSend = document.createElement('button');
+//    inputSend.innerHTML = 'Send';
+userDiv.append(chatDiv)
+//     chatDiv.appendChild(inputSend)
+popupDiv.getElement().appendChild(userDiv); //popupDivappend(userDiv);
+//    popupDiv.append(chatDiv);
 
-  return chatDiv;
+  return userDiv;
 }
