@@ -25,7 +25,7 @@ const ChatPopUpWidget = ({userData, userPopup, ...props}) => {
         
     const fetchMessages = (id) => {
         
-        fetch(`/api/messages/receive/${userPopup.id}`, {
+        fetch(`http://localhost:3000/api/messages/receive/${userPopup.id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

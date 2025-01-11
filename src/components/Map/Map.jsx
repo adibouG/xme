@@ -63,21 +63,26 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
 
   const userCtx = useContext(UserContext);
   
+  const clickedMarker = useRef(null);
   const containerRef = useRef(null);
   const [popupContainer, setPopupContainer] = useState(null);
   const [connectedUsers, setConnectedUsers] = useState([]);
   const [openUser, setOpenUser] = useState(null);
+  const [group, setGroup] = useState(null);
   
   L.Marker.include({
     chatMessageHandler: L.ChatMessageHandler,
     id: null, 
-    user: null
+    user: null,
+    onMarkerClick,
+    markerClick
   });
 
-  L.Marker.prototype.addEventListener('click', onMarkerClick);
-  function markerClick (e, userData) {
+  function markerClick (e, mark, userData) {
 
     if (!e.target) return; 
+    clickedMarker.current = this
+    console.log('markerClick this', this);
     e.target.options = userData;
     console.log('markerClick', e.target.options);
 
@@ -120,7 +125,7 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
     //   }
     // )
    */ 
-    userMarker.addEventListener('click', onMarkerClick);
+  userMarker.addEventListener('click', onMarkerClick);
   userMarker.userId = user.id
   userMarker.user = user
   userMarker.chatMessageHandler = L.ChatMessageHandler
@@ -155,6 +160,7 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
   };
 
   useEffect(() => {
+    console.log('useEffect: connectedUsers' , connectedUsers);
     if (connectedUsers.length) {
       addMarkers();
     }
@@ -164,16 +170,16 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
   const addMarkers = () => {
 
     console.log('addMarkers');
-    if (!mapRef.current) return;
-    if (!layerGroups.length) return;
+  
     if (!connectedUsers.length) return;
     const overlays = makeMarkers(connectedUsers);
-    const layerControl = L.control.layers(null, overlays)
-    layerControl.addTo(mapRef.current);
+    L.control.layers(null, overlays).addTo(mapRef.current);
+    setGroup (overlays);
+    //layerControl.addTo(mapRef.current);
   }
 
   const makeMarkers = (users) => {
-    //
+    console.log('makeMarkers');
     const layers = Object.keys(layerGroups);
     users.forEach((user) => {
       if (user.location.coords.lat && user.location.coords.lng) {
@@ -193,32 +199,38 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
     })
     const overlays = {};
     for (const layer in layerGroups) {
-      overlays[layer] = L.layerGroup(layerGroups[layer]) //.addTo(mapRef.current), [layer]));  
+      console.log('layer: ', layer);
+      overlays[layer] = L.layerGroup(layerGroups[layer]);  
     }
     return overlays; 
   };
   
 
   function onMarkerClick(e) {
-    const userPopUp = e.target.user
+    const userPopUp = e.target.user || e.target.options.user 
+    || this.options.user || this.user;
+
     console.log(userPopUp)
+    console.log('popupContainer: ', e.target.id);
     setOpenUser(userPopUp)
-    const marker = e.target;
-    const popupDiv = addInputToPopupWidget(marker.getPopup(), userPopUp);
-    setPopupContainer(popupDiv);    
+    const marker = this; //L.DomUtil.get(e.target.id);
+    // const marker = L.marker().add(L.DomUtil.get(e.target.id)); // marker(e.target;
+    const popupDiv = addInputToPopupWidget(this.getPopup(), this.options.user); //addInputToPopupWidget(mapRef.current, marker.getPopup(), userPopUp);
+    marker.getPopup().setContent(popupDiv);
+    setPopupContainer(popupDiv);
   }
 
-  useEffect(() => {
-    console.log('useEffect: popupContainer: ', popupContainer);
-    if (popupContainer) {
-      popupContainer.addEventListener('click', markerClick);
-    }
-    return () => {
-      if (popupContainer) {
-        popupContainer.removeEventListener('click', markerClick);
-      }
-    };
-  }, [popupContainer]);
+  // useEffect(() => {
+  //   console.log('useEffect: popupContainer: ', popupContainer);
+  //   if (popupContainer) {
+  //     popupContainer.addEventListener('click', markerClick);
+  //   }
+  //   return () => {
+  //     if (popupContainer) {
+  //       popupContainer.removeEventListener('click', markerClick);
+  //     }
+  //   };
+  // }, [popupContainer]);
 
   function onLocationFound(e) {
     let radius = e.accuracy;
