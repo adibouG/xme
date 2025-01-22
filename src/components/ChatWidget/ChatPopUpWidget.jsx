@@ -127,6 +127,7 @@ const ChatTabContainer = ({
     const [activeTab, setActiveTab] = React.useState(0);
 
     const handleTabClick = (index) => {
+        console.log('handleTabClick', index);
         setActiveTab(index);
     }
 
@@ -154,7 +155,7 @@ const ChatTabContainer = ({
 
                     <TabPanel tabData={userMessages} 
                         activeTab={activeTab}
-                        setActiveTab={setActiveTab}
+                        setActiveTab={handleTabClick}
                     >
                         <ChatMessageTab
                             messages={userMessages[activeTab].messages}

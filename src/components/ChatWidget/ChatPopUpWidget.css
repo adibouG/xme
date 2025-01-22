@@ -1,4 +1,10 @@
-.chat-container {
+.chat-tabs-container {
+    background: ghostwhite;
+    border: 0.1em solid black;
+    border-radius: 1em;
+    display: flex;
+}
+.chat-popup {
     background: ghostwhite;
     border: 0.1em solid black;
     border-radius: 1em;

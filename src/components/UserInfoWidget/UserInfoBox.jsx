@@ -1,6 +1,6 @@
 import React from 'react'
 import './UserInfoBox.css'
-import './assets/avatar_def.png'
+import def from './assets/avatar_def.png'
 
 const UserInfoBox = ({userData, isLoggedDevice, ...props}) => {
     console.log('UserInfoBox userData ', userData);
@@ -13,7 +13,7 @@ const UserInfoBox = ({userData, isLoggedDevice, ...props}) => {
 
         <div className="user-header"> 
             <div className="user-picture-wrapper">
-                <img src={userData?.picture} className='user-avatar' alt={userData.username} />
+                <img src={userData?.avatar || def} className='user-avatar' alt={userData.username} />
             </div>
             <div className="user-name">{userData.username}</div>
         </div>

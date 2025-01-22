@@ -1,12 +1,13 @@
 
 const sqlite3 = require('sqlite3').verbose()
-const db = new sqlite3.Database(':memory:')
+const db = new sqlite3.Database('./data.db')
 
 const initDB = () => {
   db.serialize(() => {
+
     db.run('CREATE TABLE IF NOT EXISTS user_accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, \
       username TEXT NOT NULL UNIQUE)')
-
+      console.log('user_accounts created');
     db.run('CREATE TABLE IF NOT EXISTS connected_users (id INTEGER PRIMARY KEY AUTOINCREMENT,\
       username TEXT NOT NULL UNIQUE,\
       device_id TEXT NOT NULL, \
@@ -22,14 +23,12 @@ const initDB = () => {
     ),
     db.run('CREATE TABLE IF NOT EXISTS user_messages (\
         id INTEGER PRIMARY KEY AUTOINCREMENT, \
-        to INTEGER NOT NULL,\
-        from INTEGER NOT NULL, \
-        message TEXT NOT NULL, \
-        FOREIGN KEY(to) REFERENCES connected_users(id), \
-                ON DELETE CASCADE, \
-        FOREIGN KEY(from) REFERENCES connected_users(id)  , \
-            ON DELETE CASCADE)'
-    )  
+        chat_id TEXT NOT NULL, \
+        message TEXT NOT NULL \
+    )'
+   
+   
+  )  
   })
 }
 //db

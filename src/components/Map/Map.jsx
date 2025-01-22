@@ -8,11 +8,11 @@ import { createMapWidget, addInputToPopupWidget } from './MapWidget.js';
 //import '@maptiler/leaflet-maptilersdk';
 import { getDeviceLocation, lastLocationWatch } from '../../Helpers/GeoLoc/GeoLoc.js';
 import { getDeviceType } from '../../Helpers/Device/Device.js';
-import ChatPopUpWidget from '../ChatWidget/ChatPopUpWidget.jsx';
 import './Map.css';
 const APIKEY = import.meta.env.VITE_BASE_API_KEY
 //import 'openmaptiles/dist/openmaptiles.css';
 import { mocData as DATA } from '../../mocData';
+import UserInfoWidget from '../UserInfoWidget/UserInfoWidget.jsx';
 /*
 const LeafIcon = L.Icon.extend({
   options: {
@@ -241,9 +241,11 @@ const MapComponent = ({ zoomValue, connectedUsersPos, ...props }) =>
         popupContainer !== null && ReactDOM.createPortal(
           <>
           { openUser && 
-            <ChatPopUpWidget userPopup={openUser} userData={userCtx.user} 
-
+            <UserInfoWidget userData={openUser} 
             />
+            // <ChatPopUpWidget userPopup={openUser} userData={userCtx.user} 
+
+            // />
           }
            </>
             ,

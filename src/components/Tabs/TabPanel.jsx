@@ -2,14 +2,17 @@ import React, { act } from "react";
 import './Tab.css'
 
 
-export const TabButton = ({title}) => {
+export const TabButton = ({title, index,  activeTab, setActiveTab}) => {
     console.log('title', title);
     return (
-      <li className={`tabbutton`}>
+      <li className={`tabbutton`} id={index}
+       onClick={() => setActiveTab(index)}
+       >
           {title}
       </li>
    )
   }
+
 export  const TabButtons = ({ list, activeTab, setActiveTab,...props }) =>{
     console.log('props', list);
     return (
@@ -18,7 +21,8 @@ export  const TabButtons = ({ list, activeTab, setActiveTab,...props }) =>{
           {  
         list.map((item, index) => (
             <TabButton key={index} 
-            onClick={() => setActiveTab(index)} 
+            index={index}
+            setActiveTab={setActiveTab} 
             title={item.user}
             activeTab={activeTab}
         />
@@ -61,18 +65,4 @@ export const TabPanel = ({ tabData, children,...props }) =>
           </div>
         );
       };
-    
-//     return (
-//     <>
-//     <TabButtons list={tabData} 
-//         activeTab={activeTab} 
-//         setActiveTab={setActiveTab} 
-//     />
-//     <TabContent data={tabData[activeTab]} > 
-//         {children}
-//     </TabContent>
 
-//     </>
-//     );
-//   }
-  

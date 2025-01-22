@@ -1,5 +1,6 @@
 const express = require('express')
 const router = require('./server/routes')
+const server = require('./server/server')
 
 const app = express()
 const port = 3000
@@ -10,6 +11,7 @@ app.use(express.json())
 app.use(express.static('public'))
 
 app.use('/api', router)
+server.initDB();
 
 
 app.listen(port, () => {

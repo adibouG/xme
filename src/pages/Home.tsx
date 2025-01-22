@@ -9,6 +9,7 @@ const APPTITLE = import.meta.env.VITE_APP_TITLE || 'X.me';
 
 
 const Home: React.FC = () => {
+  const [openUserChats, setOpenUserChats ] = React.useState(false);
   const [deviceType, setDeviceType] = React.useState("");
   const [deviceLocation, setDeviceLocation] = React.useState({
     timestamp: 0,
@@ -47,10 +48,10 @@ const Home: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>{APPTITLE}</IonTitle>
+          <Toolbar />
         </IonToolbar>
       </IonHeader>
       <IonContent >
-       <Toolbar />
      
        <MapComponent key={`${deviceLocation.timestamp}`} 
                     zoomValue={17}
