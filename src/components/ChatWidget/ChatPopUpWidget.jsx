@@ -1,27 +1,51 @@
 import React, { useEffect } from 'react'
+import {TabPanel,  TabButtons } from '../Tabs/TabPanel';
+import './ChatPopUpWidget.css'
 
+const tabmessages = [
+    {
+        user: 'John Doe',
+        messages: [ 
+            {   
+                type: 'sent',
+                time: Date.now() - 10000,
+                text: 'Hello, how are you?',
+            }, 
+            {
+                type: 'received',
+                time: Date.now() - 5000,
+                text: 'I\'m doing well, thanks!',
+            }
+        ] 
+    },
+    { 
+        user: 'Jane Doe',
+        messages: [
+            {
+                type: 'received',
+                time: Date.now() - 10000,
+                text: 'Hello, how are you?',
+            },
+            {
+                type: 'sent',
+                time: Date.now() - 5000,
+                text: 'I\'m doing well, thanks!' 
+            },
+        ]
+    }
+];
 const ChatPopUpWidget = ({userData, userPopup, ...props}) => {
-    const [messages, setMessages] = React.useState([]);
-    const [input, setInput] = React.useState('');
+    const [userMessages, setUserMessages] = React.useState(tabmessages);
 
     useEffect(() => {
         console.log('useEffect');
         console.log('userPopup', userPopup);
-        if (userPopup && userPopup.id) {
-            console.log('userPopup.id', userPopup.id);
-            console.log('userPopup.username', userPopup.username);
-        }
+        console.log('userData', userData);
         if (userPopup && userPopup.messages) {
             console.log('userPopup.messages', userPopup.messages);
-            if (userPopup.messages.length) {
-                setMessages(userPopup.messages);
-            }
-            else {
-                setMessages([]);
-                fetchMessages(userPopup.id);
-            }
+            setUserMessages(userPopup.messages);            
         }
-    }, [])
+    }, [userData, userPopup])
         
     const fetchMessages = (id) => {
         
@@ -35,38 +59,40 @@ const ChatPopUpWidget = ({userData, userPopup, ...props}) => {
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
-            setMessages(data);
+            setUserMessages(data);
         })
         .catch((error) => {
             console.error('Error:', error);
         })
     }
-    const handleSendMessage = (e) => {
+    const handleSendMessage = (input) => {
         console.log('handleSendMessage ', input);
         console.log('send to server from user: ', 
-            props.userData.id,
-            props.userData.username,);
+            userData);
             
         console.log('send to server to user: ',
-            props.userPopup.id,
-            props.userPopup.username,
+            userPopup
         )
 
             // Handle sending the message
+        console.log('send message to server');
+        const newUserMessages = userMessages.filter(message => message.user === userPopup.username);
+        console.log('newUserMessages', newUserMessages);
+        if (newUserMessages.length > 0) {
+            newUserMessages[0].messages.push({ type: 'sent', time: Date.now(), text: input });
+        }
+        else {
+            userMessages.push({ user: userPopup.username, messages: [{ type: 'sent', time: Date.now(), text: input }] });
+        }
+        setUserMessages((messages) => ([...messages, { user: userData.username, messages: input }]))
+        //userData.sendChatMessage(userPopup.id, input);
     };
 
-    const handleInputChange = (e) => {
-        setInput(e.target.value);
-    }
     
     const handleClosePopUp = (e) => {}
     
     const handleCloseTab = (e) => {}
 
-    const tabmessages = [
-            { sender: 'John Doe', text: 'Hello, how are you?' },
-            { sender: 'Jane Doe', text: 'I\'m doing well, thanks!' },
-          ];
     // const userTabData = {
     //     id: 1,
     //     username: 'John Doe'
@@ -75,20 +101,14 @@ const ChatPopUpWidget = ({userData, userPopup, ...props}) => {
     <div className="chat-popup">
         <ChatPopUpHeader  handleClose={handleClosePopUp}/>
         
-        <ChatTabContainer>
-
-            <ChatMessageTab  messages={tabmessages} 
-                user={userData}
-                handleCloseTab={handleCloseTab} 
-            />
-        
-        </ChatTabContainer>
-    
-        
-        
+        <ChatTabContainer userMessages={userMessages} 
+            handleSendMessage={handleSendMessage}
+            handleCloseTab={handleCloseTab}/>
+                                                                                        
     </div>
   )
 }
+
 const ChatPopUpHeader = ({title, handleClose}) => { 
 
     return (
@@ -100,54 +120,133 @@ const ChatPopUpHeader = ({title, handleClose}) => {
 }
 
 
-const ChatTabContainer = (props) => { 
+const ChatTabContainer = ({ 
+    userMessages, handleCloseTab, handleSendMessage, ...props 
+}) => { 
+
+    const [activeTab, setActiveTab] = React.useState(0);
+
+    const handleTabClick = (index) => {
+        setActiveTab(index);
+    }
+
+
+    const handleClose = (e) => {
+        handleCloseTab(e);
+    }
+    
+    const handleSend = (input) => {
+        handleSendMessage(input);
+    }
 
     return (
-        <div className="chat-tab-container">
-            {props.children}
+        <div className="chat-tabs-container">
+            {
+                userMessages &&
+                //.map((usermessage, index) => {
+                <>
+                    {/*
+                    <TabButtons list={userMessages} 
+                                activeTab={activeTab}
+                                setActiveTab={setActiveTab}
+                    />
+                    */}
+
+                    <TabPanel tabData={userMessages} 
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                    >
+                        <ChatMessageTab
+                            messages={userMessages[activeTab].messages}
+                            user={userMessages[activeTab].user} 
+                            handleCloseTab={handleClose}
+                            handleSendMessage={handleSend}
+                        />
+                    </TabPanel>
+                </>
+                            
+                }
+            
         </div> 
     )
 }
-const ChatMessageTab = ({ messages, user, handleCloseTab }) => 
-{
-    const handleSendMessage = (e) => {}
-    const handleInputChange = (e) => {}
+const ChatMessageTab = ({ messages, user, handleCloseTab, handleSendMessage ,...props }) => 
+{   
+    
+    const handleSend = (input) => {
+        
+        console.log('handleSend ', input);
+            // Handle sending the message
+        handleSendMessage(input);
+    }
     return (
-        <div className="chat-message-tab">
+        <div className="chat-container">
             <ChatPopUpHeader  user={user} handleClose={handleCloseTab} />
-            <ChatMessages user={user} messages={messages} />
-            <SubmitMessage handleSendMessage={handleSendMessage} handleInputChange={handleInputChange} />
+            <ChatMessages messages={messages} />
+            <SubmitMessage handleSendMessage={handleSend}
+        />
         </div>
     )       
 }
 
 const SubmitMessage  = ({handleSendMessage}) => {
     const [input, setInput] = React.useState('');
-      
+    const handleInput = (e) => {
+        setInput(e.target.value);
+    }
+    const handleSend = () => {
+
+        if (input) {
+            handleSendMessage(input);
+            setInput('');
+        }
+        
+    }  
     return (
             <div className="message-input" >
-                <input type="text" placeholder="Type a message..." value={input} onChange={setInput} />
-                <button onClick={handleSendMessage}>Send</button>
+                <input type="text"
+                 placeholder="Type a message..." 
+                 value={input} 
+                 onChange={handleInput} 
+            />
+                <button onClick={handleSend}>Send</button>
             </div>
         )
 }
 
-const ChatMessages = ({user, messages}) => {
+const ChatMessages = ({messages}) => {
     
     return (
     <div className="chat-messages">
         <div className="chat-message">
-            {messages.map((message, index) => (
-                <Message key={index} message={message} />
-            ))}
+            {
+            messages.map((message, index) => {
+       
+                return <Message 
+                    key={index} 
+                    type={message.type}
+                    text={message.text}
+                    sender={message.sender}
+                    time={message.time}
+                />
+            })
+            }
         </div>
               </div>
     )
 }
-const Message = ({sender, text}) => 
+const Message = ({sender, text, time, type}) => 
 <div className="message">
-            <span className="message-sender">John Doe:</span>
-            <span className="message-text">Hello, how are you?</span>
-        </div>
+
+    <div className="message-type" style={{
+        color: type === 'sent' ? 'blue' : 'green',
+        textAlign: type === 'sent' ? 'right' : 'left'
+    }}>
+        <span className='message-type'>{type} :</span>
+    <span className="message-sender">{sender}:</span>
+    <span className="message-time">{time}</span>
+    <span className="message-text">{text}</span>
+    </div>
+</div>
    
 export default ChatPopUpWidget

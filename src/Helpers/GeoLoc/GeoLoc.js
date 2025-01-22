@@ -2,8 +2,8 @@ import { Geolocation } from "@capacitor/geolocation";
 export var lastLocationWatch = null;
 export var geolocationError = null;
 export var geolocationPermissionError = null;
-
 export var watchId = null;
+
 export const getDeviceLocation = async (maxAge = 30, watchTime = 0) => {
     let coordinates = null;
 
@@ -34,7 +34,8 @@ export const getDeviceLocation = async (maxAge = 30, watchTime = 0) => {
         }
         lastLocationWatch = coordinates ;
         return lastLocationWatch;
-    } catch (error) {
+    } 
+    catch (error) {
         console.log(error);
         const permState = await getPermissions();
         if (permState && permState.location !== 'denied' && !geolocationError && !geolocationPermissionError) {

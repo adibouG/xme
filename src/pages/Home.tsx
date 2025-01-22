@@ -53,12 +53,9 @@ const Home: React.FC = () => {
        <Toolbar />
      
        <MapComponent key={`${deviceLocation.timestamp}`} 
-                    myPos={deviceLocation} 
-                    mapCenterLat={deviceLocation.coords.lat} 
-                    mapCenterLng={deviceLocation.coords.lng} 
                     zoomValue={17}
-                    markerPositions={[]} 
-                  
+                    connectedUsersPos={[]}
+                       
         /> 
        
       </IonContent>

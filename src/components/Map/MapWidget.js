@@ -107,14 +107,16 @@ export function addInputToPopupWidget(popupDiv, userData) {
   const userDiv = document.createElement('div');
   userDiv.id = userData.id;
   userDiv.user = userData;
-  
+    
   const chatDiv = document.createElement('div');
 //    const chatInput = document.createElement('input');
 //    const inputSend = document.createElement('button');
 //    inputSend.innerHTML = 'Send';
 userDiv.append(chatDiv)
 //     chatDiv.appendChild(inputSend)
-popupDiv.getElement().appendChild(userDiv); //popupDivappend(userDiv);
+popupDiv.getElement().append(userDiv); //popupDivappend(userDiv);
+
+ //popupDivappend(userDiv);
 //    popupDiv.append(chatDiv);
 
   return userDiv;

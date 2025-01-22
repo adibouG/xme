@@ -1,6 +1,7 @@
 // MapComponent.js
 import React, {useRef, useContext, useLayoutEffect, useState, useEffect, LegacyRef } from 'react';
 import ReactDOM from 'react-dom';
+import { LoggedInUserContext } from '../Context/LoggedInUserContext/LoggedInUserContext.jsx';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { createMapWidget, addInputToPopupWidget } from './MapWidget.js';
@@ -25,43 +26,17 @@ const LeafIcon = L.Icon.extend({
 });
 */
 
-const loggedUser = {
-  id: 1,
-  username: 'You',
-  preference: {
-    channels: [],
-    categories: []
-  },
-  location: {
-    timestamp: Date.now(),
-    coords: {
-      lat: 23,
-      lng: 45
-    }
-  }	
-}
-
-const UserContext = React.createContext({
-  user: loggedUser,
-  messages: [],
-  setMessages: () => {},
-  setUser: () => {},
-  setPos : () => {} 
-});
-
-
 
  
 let CHANNELID_MAP = {}
 let layerGroups = {}
-const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
-   myPos, markerPositions, ...props }) => 
+const MapComponent = ({ zoomValue, connectedUsersPos, ...props }) => 
 { 
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const mapFilterRef = useRef('');
 
-  const userCtx = useContext(UserContext);
+  const userCtx = useContext(LoggedInUserContext);
   
   const clickedMarker = useRef(null);
   const containerRef = useRef(null);
@@ -144,8 +119,6 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
       });
       console.log('layerGroups: ', layerGroups);
       console.log('CHANNELID_MAP: ', CHANNELID_MAP);
-
-
       setConnectedUsers(DATA.users);
     }
   } 
@@ -190,7 +163,7 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
             || user.preference.channels.includes(CHANNELID_MAP[channel])
           ) 
           { 
-            layerGroups[channel].push(
+            return layerGroups[channel].push(
               makeMarker(user)
             )
           }
@@ -210,39 +183,39 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
     const userPopUp = e.target.user || e.target.options.user 
     || this.options.user || this.user;
 
-    console.log(userPopUp)
-    console.log('popupContainer: ', e.target.id);
+    console.log('onMarkerClick')
+    console.log('userPopUp: ', userPopUp);
     setOpenUser(userPopUp)
     const marker = this; //L.DomUtil.get(e.target.id);
     // const marker = L.marker().add(L.DomUtil.get(e.target.id)); // marker(e.target;
     const popupDiv = addInputToPopupWidget(this.getPopup(), this.options.user); //addInputToPopupWidget(mapRef.current, marker.getPopup(), userPopUp);
     marker.getPopup().setContent(popupDiv);
+    clickedMarker.current = marker;
     setPopupContainer(popupDiv);
   }
-
-  // useEffect(() => {
-  //   console.log('useEffect: popupContainer: ', popupContainer);
-  //   if (popupContainer) {
-  //     popupContainer.addEventListener('click', markerClick);
-  //   }
-  //   return () => {
-  //     if (popupContainer) {
-  //       popupContainer.removeEventListener('click', markerClick);
-  //     }
-  //   };
-  // }, [popupContainer]);
 
   function onLocationFound(e) {
     let radius = e.accuracy;
-    const marker = L.marker(e.latlng, {user: userCtx}).addTo(mapRef.current).bindPopup("You are within " + radius + " meters from this point", {user: userCtx}).openPopup();
-    L.circle(e.latlng, radius).addTo(mapRef.current);
-    const popupDiv = addInputToPopupWidget(marker.getPopup(), marker.options.user); //addInputToPopupWidget(mapRef.current, marker.getPopup(), marker.options.user), marker.getElement());
-    //marker.getPopup().setContent(popupDiv);
-    setOpenUser(userCtx);
+    console.log('onLocationFound ', e.latlng, radius);
+    userCtx.setPos(e.latlng, userCtx.user, null); //user.location.coords
+    setOpenUser(userCtx.user);
+    console.log('userCtx setpos: ', userCtx);
 
-    setPopupContainer(popupDiv);
-  
+    const marker = L.marker(e.latlng, {user: userCtx.user, id: userCtx.user.id}).addTo(mapRef.current).bindPopup("You are within " + radius + " meters from this point", {
+      user: userCtx.user, 
+      id: userCtx.user.id}).openPopup();
+    L.circle(e.latlng, radius).addTo(mapRef.current);
+    //marker.getPopup().setContent(popupDiv);
+    //clickedMarker.current = marker;
+    setUserPopupElement(marker);
   }
+  
+  const setUserPopupElement = (marker) => {
+    console.log('setUserPopupElement');
+    const popupDiv = addInputToPopupWidget(marker.getPopup(), marker.options.user); //addInputToPopupWidget(mapRef.current, marker.getPopup(), marker.options.user), marker.getElement());
+    setPopupContainer(popupDiv);
+  }
+
   function onLocationError(e) {
     alert(e.message);
   }
@@ -263,13 +236,13 @@ const MapComponent = ({ mapCenterLat, mapCenterLng, zoomValue,
 
   return (
     <div  className='map_wrapper'>
-      <div ref={mapContainerRef} className='map' id='map'>
+      <div ref={mapContainerRef} className='map' >
       {
         popupContainer !== null && ReactDOM.createPortal(
           <>
           { openUser && 
-            <ChatPopUpWidget userPopUp={openUser} 
-            //userData={user} 
+            <ChatPopUpWidget userPopup={openUser} userData={userCtx.user} 
+
             />
           }
            </>
