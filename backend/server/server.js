@@ -8,7 +8,8 @@ const initDB = () => {
     db.run('CREATE TABLE IF NOT EXISTS user_accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, \
       username TEXT NOT NULL UNIQUE)')
       console.log('user_accounts created');
-    db.run('CREATE TABLE IF NOT EXISTS connected_users (id INTEGER PRIMARY KEY AUTOINCREMENT,\
+   
+      db.run('CREATE TABLE IF NOT EXISTS connected_users (id INTEGER PRIMARY KEY AUTOINCREMENT,\
       username TEXT NOT NULL UNIQUE,\
       device_id TEXT NOT NULL, \
       user_account INTEGER, \
@@ -32,6 +33,45 @@ const initDB = () => {
   })
 }
 //db
+const newUserConnect = (req, res) => {
+  if (!req.body.username) {
+      return res.sendStatus(400)
+  }  
+
+  const data = req.body;
+  data.device_id = Date.now() + '::' +
+   createHash('sha256').update(req.ip).digest('hex') +
+   '::' + randomUUID();
+  const user_id = userConnect(data);
+  if (user_id === -1) {
+    return res.sendStatus(400)
+  }
+  const device_id = data.device_id;
+
+  res.cookie('user_id', user_id)
+  res.cookie('username', data.username)
+  res.cookie('device_id', device_id)
+  res.sendStatus(200)
+}
+const userConnect = (data) => {
+
+  if (connected_users[data.device_id]) {
+      return -1;
+  }
+  
+  const user = {
+      id:  Object.keys(connected_users).length + 1,
+      username: data.username,
+      device_id: data.device_id,
+      connected_at: Date.now(),
+      position: data.position,
+  }
+   
+  connected_users[user.device_id] = user
+  connected_user_keys[user.id] = user.device_id 
+
+  return user.id
+}
 
 //server dynamic data
 const connected_users = new Map(); //use a Set ?
@@ -76,25 +116,6 @@ const addMessage = (data) => {
     
 }
 
-const userConnect = (data) => {
-
-    if (connected_users[data.device_id]) {
-        return -1;
-    }
-    
-    const user = {
-        id:  Object.keys(connected_users).length + 1,
-        username: data.username,
-        device_id: data.device_id,
-        connected_at: Date.now(),
-        position: data.position,
-    }
-     
-    connected_users[user.device_id] = user
-    connected_user_keys[user.id] = user.device_id 
-
-    return user.id
-}
 
 const userDisconnect = (data) => {
   const isDeleted = (connected_users.delete(data.device_id) &&
@@ -156,6 +177,7 @@ module.exports = {
     posted_messages_events,
     connected_user_keys,
     connected_users,
+    newUserConnect,
     userConnect,
     userDisconnect,
     updateUserPosition,

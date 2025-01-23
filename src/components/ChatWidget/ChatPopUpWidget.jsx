@@ -125,7 +125,7 @@ const ChatTabContainer = ({
 }) => { 
 
     const [activeTab, setActiveTab] = React.useState(0);
-
+    console.log('userMessages', userMessages);
     const handleTabClick = (index) => {
         console.log('handleTabClick', index);
         setActiveTab(index);

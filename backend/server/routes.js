@@ -5,21 +5,9 @@ const { randomUUID, createHash  } = require('crypto');
 routes.post('/users/connect', (req, res) => {
     try {
         const data = req.body;
-        
-        if (req.cookies.device_id) {
-            data.device_id = req.cookies.device_id
-        }
-        if (!data.username) {
-            if (req.cookies.username) {
-                data.username = req.cookies.username
-            } else
-                return res.sendStatus(400)
-        }
-        
-        if (!data.position) {
-            return res.sendStatus(400)
-        }
         console.log(data);
+           
+         
     
         if (!data.device_id) {
             data.device_id = Date.now() + '::' 

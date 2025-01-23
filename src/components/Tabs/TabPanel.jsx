@@ -59,7 +59,7 @@ export const TabPanel = ({ tabData, children,...props }) =>
       
       
         return (
-          <div>
+          <div className="tabcontent">
             {tabHeaders}
             {children}
           </div>

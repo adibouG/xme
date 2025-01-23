@@ -18,8 +18,8 @@ const UserInfoBox = ({userData, isLoggedDevice, ...props}) => {
             <div className="user-name">{userData.username}</div>
         </div>
         <div className="user-info">
-            <span className="user-preference">{userData?.preference}</span>
-            <span className="user-categories">{userData?.categories}</span>
+            <span className="user-preference">{userData?.userData.preference.channels}</span>
+            <span className="user-categories">{userData?.userData.preference.categories}</span>
         </div>
 
     </div>

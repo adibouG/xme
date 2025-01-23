@@ -200,7 +200,7 @@ const MapComponent = ({ zoomValue, connectedUsersPos, ...props }) =>
     userCtx.setPos(e.latlng, userCtx.user, null); //user.location.coords
     setOpenUser(userCtx.user);
     console.log('userCtx setpos: ', userCtx);
-
+  
     const marker = L.marker(e.latlng, {user: userCtx.user, id: userCtx.user.id}).addTo(mapRef.current).bindPopup("You are within " + radius + " meters from this point", {
       user: userCtx.user, 
       id: userCtx.user.id}).openPopup();
@@ -208,6 +208,19 @@ const MapComponent = ({ zoomValue, connectedUsersPos, ...props }) =>
     //marker.getPopup().setContent(popupDiv);
     //clickedMarker.current = marker;
     setUserPopupElement(marker);
+    fetch('http://localhost:3000/api/users/connect', {
+      method: 'POST',
+      body: JSON.stringify(userCtx.user),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }).then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    })
   }
   
   const setUserPopupElement = (marker) => {
