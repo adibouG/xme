@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'ionic.xme',
+  appId: 'ionic.xme_app',
   appName: 'xme',
   webDir: 'dist'
 };

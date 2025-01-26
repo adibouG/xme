@@ -1,4 +1,4 @@
-package ionic.xme;
+package ionic.xme_app;
 
 import com.getcapacitor.BridgeActivity;
 
